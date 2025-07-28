@@ -1,0 +1,2 @@
+Total count of products:  34
+Found product: Blue Top

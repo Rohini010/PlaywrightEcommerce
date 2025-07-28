@@ -1,0 +1,19 @@
+{
+  "name": "rohinibitsproject",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rm -rf allure-results allure-report",
+    "setup-auth": "node tests/setup/saveSessionStorage.js",
+    "test:session": "npm run setup-auth && npx playwright test tests/addProduct.spec.js --workers=1 && npx playwright test tests/cartVerify.spec.js --workers=1 && npx playwright test tests/checkout.spec.js --workers=1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.54.1",
+    "@types/node": "^24.1.0",
+    "allure-playwright": "^3.3.2"
+  }
+}
