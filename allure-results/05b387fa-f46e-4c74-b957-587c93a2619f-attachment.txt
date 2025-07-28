@@ -1,0 +1,3 @@
+Total count of products:  34
+Found product: Winter Top
+Matched product in cart: Winter Top
