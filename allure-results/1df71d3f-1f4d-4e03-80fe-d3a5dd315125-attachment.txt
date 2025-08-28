@@ -1,3 +1,0 @@
-Total count of products:  34
-Found product: Men Tshirt
-Matched product in cart: Men Tshirt
