@@ -1,23 +1,31 @@
-const { test, expect } = require("@playwright/test");
-// const { LoginPage } = require("../page-objects/LoginPage");
-const { Products } = require("../page-objects/Products");
-const { Cart } = require("../page-objects/Cart");
-const { email, password, productName } = require("../test-data/userData");
+const { test } = require("../fixtures/testWithAuth");
 
-test.use({ storageState: "storageState.json" });
+const { expect } = require("@playwright/test");
+const { clearCart } = require("../utils/clearCart");
+const { CartPage } = require("../page-objects/CartPage");
+const { ProductsPage } = require("../page-objects/ProductsPage");
+const testData = require("../test-data/userData");
 
-test("Verify product in cart", async ({ page }) => {
-  // const loginPage = new LoginPage(page);
-  const productsPage = new Products(page);
-  const cart = new Cart(page);
+test.describe("Cart Verification Flow", () => {
+  let productsPage, cartPage;
 
-  // await loginPage.open();
-  // await loginPage.validLogin(email, password);
+  test.beforeEach(async ({ page }) => {
+    // Initialize page objects
+    productsPage = new ProductsPage(page);
+    cartPage = new CartPage(page);
 
-  await productsPage.openProductsPage();
-  await productsPage.addProductToCart(productName);
-  await productsPage.navigateToCart();
+    // Always start with empty cart
+    await clearCart(page);
+  });
+  test("verify cart has added  multiple products", async ({ page }) => {
+    await productsPage.openProductsPage();
+    await productsPage.addProductsToCart(testData.productNames);
 
-  const isProductInCart = await cart.verifyProductInCart(productName);
-  expect(isProductInCart).toBe(true);
+    await productsPage.navigateToCart();
+    const items = await cartPage.getCartProductNames();
+
+    for (const expected of testData.productNames) {
+      expect(items).toContain(expected);
+    }
+  });
 });

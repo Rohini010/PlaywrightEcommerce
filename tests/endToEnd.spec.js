@@ -1,36 +1,62 @@
-const { test, expect } = require("@playwright/test");
+const { test } = require("@playwright/test");
 const { LoginPage } = require("../page-objects/LoginPage");
-const { Products } = require("../page-objects/Products");
-const { Cart } = require("../page-objects/Cart");
-const { Checkout } = require("../page-objects/Checkout");
-const {
-  email,
-  password,
-  finalproduct,
-  orderSuccessMessage,
-} = require("../test-data/userData");
+const { ProductsPage } = require("../page-objects/ProductsPage");
+const { CartPage } = require("../page-objects/CartPage");
+const { CheckoutPage } = require("../page-objects/CheckoutPage");
+const testData = require("../test-data/userData");
 
-test("End-to-End flow", async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  const productsPage = new Products(page);
-  const cart = new Cart(page);
-  const checkout = new Checkout(page);
+const scenarios = [
+  { name: "Checkout all products (no removal)", remove: false },
+  {
+    name: `Checkout after removing "${testData.productToRemove}"`,
+    remove: true,
+  },
+];
 
-  await loginPage.open();
-  await loginPage.validLogin(email, password);
-  await productsPage.productLink.click();
+scenarios.forEach((scenario) => {
+  test.describe(`E2E Flow - ${scenario.name}`, () => {
+    let loginPage, productsPage, cartPage, checkoutPage;
 
-  const successMsg = await productsPage.addProductToCart(finalproduct);
-  expect(successMsg).toContain("product has been added");
+    test.beforeEach(async ({ page }) => {
+      loginPage = new LoginPage(page);
+      productsPage = new ProductsPage(page);
+      cartPage = new CartPage(page);
+      checkoutPage = new CheckoutPage(page);
 
-  await productsPage.navigateToCart();
-  const isProductInCart = await cart.verifyProductInCart(finalproduct);
-  expect(isProductInCart).toBe(true);
+      // Ensure clean login & cart
+      await loginPage.open();
+      await loginPage.validLogin();
+      await page.goto("https://automationexercise.com/view_cart");
+      await cartPage.clearCart();
+    });
 
-  await checkout.proceedToCheckout(finalproduct);
-  await checkout.confirmOrder(orderSuccessMessage);
-  await expect(page).toHaveURL(/.*payment_done/);
+    test.afterEach(async () => {
+      await loginPage.logoutAfterOrder();
+    });
 
-  await checkout.logoutAfterOrder();
-  await expect(page).toHaveURL(/.*login/);
+    test("User can complete order successfully", async () => {
+      // Add products
+      await productsPage.openProductsPage();
+      await productsPage.addProductsToCart(testData.productNames);
+      await productsPage.navigateToCart();
+
+      let expectedProducts = [...testData.productNames];
+
+      if (scenario.remove) {
+        await cartPage.removeProduct(testData.productToRemove);
+        expectedProducts = expectedProducts.filter(
+          (p) => p !== testData.productToRemove
+        );
+        await cartPage.verifyMultipleProducts(expectedProducts);
+      }
+
+      // Checkout
+      await cartPage.proceedToCheckout();
+      await checkoutPage.verifyProductsInCheckout(expectedProducts);
+      await checkoutPage.enterOrderMessage("Automating exercise");
+      await checkoutPage.placeOrder();
+      await checkoutPage.fillPaymentDetails(testData.payment);
+      await checkoutPage.confirmOrder(testData.messages.orderSuccess);
+    });
+  });
 });
