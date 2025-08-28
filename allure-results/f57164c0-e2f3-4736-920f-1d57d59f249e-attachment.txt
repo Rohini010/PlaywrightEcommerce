@@ -1,0 +1,40 @@
+[AIWrapper] Filled Email with: rohini@example.com
+[AIWrapper] Filled Password with: Rohini@123
+[AIWrapper] Clicked Login Button (strict)
+[AIWrapper] Clicked Products link (strict)
+Adding product to cart: Winter Top
+Found 1 instances of Winter Top
+[AIWrapper] Got text from Cart modal message: Your product has been added to cart.
+Cart modal message: Your product has been added to cart.
+[AIWrapper] Clicked Continue Shopping (strict)
+Adding product to cart: Men Tshirt
+Found 1 instances of Men Tshirt
+[AIWrapper] Got text from Cart modal message: Your product has been added to cart.
+Cart modal message: Your product has been added to cart.
+[AIWrapper] Clicked Continue Shopping (strict)
+Adding product to cart: Blue Top
+Found 1 instances of Blue Top
+[AIWrapper] Got text from Cart modal message: Your product has been added to cart.
+Cart modal message: Your product has been added to cart.
+[AIWrapper] Clicked Continue Shopping (strict)
+[AIWrapper] Clicked Cart nav link (strict)
+[AIWrapper] Clicked Remove Blue Top from cart (strict)
+Removed product from cart: Blue Top
+Cart items: [ 'Winter Top', 'Men Tshirt' ]
+Checking if all products are in cart: true
+[AIWrapper] Clicked Proceed To Checkout (strict)
+Verified product in checkout: Winter Top
+Verified product in checkout: Men Tshirt
+[AIWrapper] Filled Order message with: Automating exercise
+[AIWrapper] Clicked Place Order (strict)
+[AIWrapper] Filled Name on Card with: Rohini Shilimkar
+[AIWrapper] Filled Card Number with: 4111111111111111
+[AIWrapper] Filled CVC with: 123
+[AIWrapper] Filled Expiry Month with: 12
+[AIWrapper] Filled Expiry Year with: 2027
+Payment details entered successfully
+[AIWrapper] Clicked Confirm Order (strict)
+[AIWrapper] Got text from Confirmation message: Order Placed!
+Order confirmed with message: "Order Placed!"
+[AIWrapper] Clicked Logout (strict)
+Logged out after order
