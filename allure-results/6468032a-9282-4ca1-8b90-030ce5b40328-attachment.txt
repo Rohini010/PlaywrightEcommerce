@@ -1,7 +1,0 @@
-[AIWrapper] Clicked Products link (strict)
-Adding product to cart: Winter Top
-Found 1 instances of Winter Top
-[AIWrapper] Got text from Cart modal message: Your product has been added to cart.
-Cart modal message: Your product has been added to cart.
-[AIWrapper] Clicked Continue Shopping (strict)
- Winter Top added with msg: Your product has been added to cart.
