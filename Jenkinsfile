@@ -7,7 +7,7 @@ pipeline {
     parameters {
         choice(
             name: 'TEST_SUITE',
-            choices: ['all', 'addProduct', 'cartVerify', 'checkout'],
+            choices: ['all', 'addProduct', 'cartVerify', 'checkout','endToEnd'],
             description: 'Select which test suite to run'
         )
     }
@@ -68,7 +68,7 @@ pipeline {
                         case 'checkout':
                             bat 'npm run test:checkout'
                             break
-                        case 'EndToEnd':
+                        case 'endToEnd':
                             bat 'npm run test:endToEnd'
                             break
                     }
