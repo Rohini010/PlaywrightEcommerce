@@ -68,6 +68,9 @@ pipeline {
                         case 'checkout':
                             bat 'npm run test:checkout'
                             break
+                        case 'EndToEnd':
+                            bat 'npm run test:endToEnd'
+                            break
                     }
                 }
             }
