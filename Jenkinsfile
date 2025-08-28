@@ -40,29 +40,38 @@ pipeline {
         }
 
         stage('Clean Reports') {
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    bat 'npm run clean'
-                }
+           steps {
+                bat 'npm run clean'
             }
         }
 
-      stage('Run Tests') {
-    steps {
-        script {
-            if (params.TEST_SUITE == 'all') {
-                // npm run test:allure
-                bat 'npm run test:allure --headed'
-            } else if (params.TEST_SUITE == 'addProduct') {
-                bat 'cmd /c "npx playwright test tests/addProduct.spec.js --reporter=line,allure-playwright --headed"'
-            } else if (params.TEST_SUITE == 'cartVerify') {
-                bat 'cmd /c "npx playwright test tests/cartVerify.spec.js --reporter=line,allure-playwright --headed"'
-            } else if (params.TEST_SUITE == 'checkout') {
-                bat 'cmd /c "npx playwright test tests/checkout.spec.js --reporter=line,allure-playwright --headed"'
+        stage('Prepare Allure') {
+            steps {
+                bat 'npx allure --version'
+            }
+}
+
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    switch(params.TEST_SUITE) {
+                        case 'all':
+                            bat 'npm run test:all'
+                            break
+                        case 'addProduct':
+                            bat 'npm run test:addProduct'
+                            break
+                        case 'cartVerify':
+                            bat 'npm run test:cartVerify'
+                            break
+                        case 'checkout':
+                            bat 'npm run test:checkout'
+                            break
+                    }
+                }
             }
         }
-    }
-}
 
 
         stage('Generate Allure Report') {
