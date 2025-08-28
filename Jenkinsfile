@@ -17,10 +17,18 @@ pipeline {
     }
 
     stages {
+
+        stage('Verify NodeJS') {
+            steps {
+                sh 'node -v'
+                sh 'npm -v'
+            }
+        }
+
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/your-username/rohinibitsproject.git'
+                    url: 'https://github.com/Rohini010/PlaywrightEcommerce.git'
             }
         }
 
