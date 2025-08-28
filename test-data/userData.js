@@ -20,6 +20,7 @@ module.exports = {
   messages: {
     orderSuccess: "Order Placed!",
     loginSuccess: "Logged in successfully!",
+    incorrectCredentials: "Your email or password is incorrect!",
   },
 
   //Payment Data
