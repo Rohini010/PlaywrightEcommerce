@@ -47,21 +47,23 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                script {
-                    if (params.TEST_SUITE == 'all') {
-                        bat 'npm run test:allure'
-                    } else if (params.TEST_SUITE == 'addProduct') {
-                        bat 'cmd /c "npm run setup-auth && npx playwright test tests/addProduct.spec.js --reporter=line,allure-playwright --workers=1"'
-                    } else if (params.TEST_SUITE == 'cartVerify') {
-                        bat 'cmd /c "npm run setup-auth && npx playwright test tests/cartVerify.spec.js --reporter=line,allure-playwright --workers=1"'
-                    } else if (params.TEST_SUITE == 'checkout') {
-                        bat 'cmd /c "npm run setup-auth && npx playwright test tests/checkout.spec.js --reporter=line,allure-playwright --workers=1"'
-                    }
-                }
+      stage('Run Tests') {
+    steps {
+        script {
+            if (params.TEST_SUITE == 'all') {
+                // npm run test:allure
+                bat 'npm run test:allure'
+            } else if (params.TEST_SUITE == 'addProduct') {
+                bat 'cmd /c "npx playwright test tests/addProduct.spec.js --reporter=line,allure-playwright --workers=1"'
+            } else if (params.TEST_SUITE == 'cartVerify') {
+                bat 'cmd /c "npx playwright test tests/cartVerify.spec.js --reporter=line,allure-playwright --workers=1"'
+            } else if (params.TEST_SUITE == 'checkout') {
+                bat 'cmd /c "npx playwright test tests/checkout.spec.js --reporter=line,allure-playwright --workers=1"'
             }
         }
+    }
+}
+
 
         stage('Generate Allure Report') {
             steps {
