@@ -14,8 +14,8 @@ export default defineConfig({
     headless: false, // headless for CI/CD
     // storageState: "tests/setup/auth.json",
     screenshot: "only-on-failure",
-    video: "retain-on-failure",
-    trace: "retain-on-failure",
+    video: "on",
+    trace: "on",
   },
 
   workers: 1,
