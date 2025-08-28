@@ -1,39 +1,46 @@
-const { test, expect } = require("@playwright/test");
-// const { LoginPage } = require("../page-objects/LoginPage");
-const { Products } = require("../page-objects/Products");
-const { Cart } = require("../page-objects/Cart");
-const { Checkout } = require("../page-objects/Checkout");
-const {
-  email,
-  password,
-  productName,
-  checkoutproductName,
-  orderSuccessMessage,
-} = require("../test-data/userData");
+const { test } = require("../fixtures/testWithAuth");
+const { expect } = require("@playwright/test");
+const { clearCart } = require("../utils/clearCart");
+const { ProductsPage } = require("../page-objects/ProductsPage");
+const { CartPage } = require("../page-objects/CartPage");
+const { CheckoutPage } = require("../page-objects/CheckoutPage");
+const testData = require("../test-data/userData");
 
-test.use({ storageState: "storageState.json" });
+test.describe("Checkout Flow", () => {
+  let productsPage, cartPage, checkoutPage;
 
-test("Checkout and place order", async ({ page }) => {
-  // const loginPage = new LoginPage(page);
-  const productsPage = new Products(page);
-  const cart = new Cart(page);
-  const checkout = new Checkout(page);
+  test.beforeEach(async ({ page }) => {
+    // Initialize page objects
+    productsPage = new ProductsPage(page);
+    cartPage = new CartPage(page);
+    checkoutPage = new CheckoutPage(page);
 
-  // await loginPage.open();
-  // await loginPage.validLogin(email, password);
-  await page.pause();
+    // Always start with empty cart
+    await clearCart(page);
+  });
 
-  await productsPage.openProductsPage();
-  await productsPage.addProductToCart(checkoutproductName);
-  await productsPage.navigateToCart();
+  test("Checkout and place order", async ({ page }) => {
+    // Navigate to products and add product
+    await productsPage.openProductsPage();
+    await productsPage.addProductToCart(testData.productName);
+    await productsPage.navigateToCart();
 
-  const isProductInCart = await cart.verifyProductInCart(checkoutproductName);
-  expect(isProductInCart).toBe(true);
+    // Verify cart
+    await cartPage.verifyProductInCart(testData.productName);
 
-  await checkout.proceedToCheckout(checkoutproductName);
-  await checkout.confirmOrder(orderSuccessMessage);
-  await expect(page).toHaveURL(/.*payment_done/);
+    // Proceed to checkout
+    await cartPage.proceedToCheckout();
+    await checkoutPage.verifyProductsInCheckout([testData.productName]);
 
-  await checkout.logoutAfterOrder();
-  await expect(page).toHaveURL(/.*login/);
+    // Enter message & place order
+    await checkoutPage.enterOrderMessage("Automating checkout flow");
+    await checkoutPage.placeOrder();
+
+    // Payment details
+    await checkoutPage.fillPaymentDetails(testData.payment);
+    await checkoutPage.confirmOrder();
+
+    // Logout after placing order
+    await checkoutPage.logoutAfterOrder();
+  });
 });
