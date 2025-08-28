@@ -19,7 +19,8 @@ module.exports = {
   //Messages
   messages: {
     orderSuccess: "Order Placed!",
-    loginSuccess: "Logged in successfully!", // if your app shows this
+    loginSuccess: "Logged in successfully!",
+    incorrectCredentials: "Your email or password is incorrect!",
   },
 
   //Payment Data
