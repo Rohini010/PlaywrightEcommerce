@@ -52,13 +52,13 @@ pipeline {
         script {
             if (params.TEST_SUITE == 'all') {
                 // npm run test:allure
-                bat 'npm run test:allure'
+                bat 'npm run test:allure --workers=1 --headed'
             } else if (params.TEST_SUITE == 'addProduct') {
-                bat 'cmd /c "npx playwright test tests/addProduct.spec.js --reporter=line,allure-playwright --workers=1"'
+                bat 'cmd /c "npx playwright test tests/addProduct.spec.js --reporter=line,allure-playwright --workers=1 --headed"'
             } else if (params.TEST_SUITE == 'cartVerify') {
-                bat 'cmd /c "npx playwright test tests/cartVerify.spec.js --reporter=line,allure-playwright --workers=1"'
+                bat 'cmd /c "npx playwright test tests/cartVerify.spec.js --reporter=line,allure-playwright --workers=1 --headed"'
             } else if (params.TEST_SUITE == 'checkout') {
-                bat 'cmd /c "npx playwright test tests/checkout.spec.js --reporter=line,allure-playwright --workers=1"'
+                bat 'cmd /c "npx playwright test tests/checkout.spec.js --reporter=line,allure-playwright --workers=1 --headed"'
             }
         }
     }
