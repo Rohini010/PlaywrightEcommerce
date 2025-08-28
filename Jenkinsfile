@@ -13,15 +13,15 @@ pipeline {
     }
 
     environment {
-        PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}/.playwright"
+        PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}\\.playwright"
     }
 
     stages {
 
         stage('Verify NodeJS') {
             steps {
-                sh 'node -v'
-                sh 'npm -v'
+                bat 'node -v'
+                bat 'npm -v'
             }
         }
 
@@ -34,14 +34,16 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
-                sh 'npx playwright install --with-deps'
+                bat 'npm install'
+                bat 'npx playwright install'
             }
         }
 
         stage('Clean Reports') {
             steps {
-                sh 'npm run clean || true'
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    bat 'npm run clean'
+                }
             }
         }
 
@@ -49,14 +51,13 @@ pipeline {
             steps {
                 script {
                     if (params.TEST_SUITE == 'all') {
-                        // full suite with allure
-                        sh 'npm run test:allure'
+                        bat 'npm run test:allure'
                     } else if (params.TEST_SUITE == 'addProduct') {
-                        sh 'npm run setup-auth && npx playwright test tests/addProduct.spec.js --reporter=line,allure-playwright --workers=1'
+                        bat 'cmd /c "npm run setup-auth && npx playwright test tests/addProduct.spec.js --reporter=line,allure-playwright --workers=1"'
                     } else if (params.TEST_SUITE == 'cartVerify') {
-                        sh 'npm run setup-auth && npx playwright test tests/cartVerify.spec.js --reporter=line,allure-playwright --workers=1'
+                        bat 'cmd /c "npm run setup-auth && npx playwright test tests/cartVerify.spec.js --reporter=line,allure-playwright --workers=1"'
                     } else if (params.TEST_SUITE == 'checkout') {
-                        sh 'npm run setup-auth && npx playwright test tests/checkout.spec.js --reporter=line,allure-playwright --workers=1'
+                        bat 'cmd /c "npm run setup-auth && npx playwright test tests/checkout.spec.js --reporter=line,allure-playwright --workers=1"'
                     }
                 }
             }
@@ -64,7 +65,7 @@ pipeline {
 
         stage('Generate Allure Report') {
             steps {
-                sh 'npm run allure:generate'
+                bat 'npm run allure:generate'
             }
         }
     }
