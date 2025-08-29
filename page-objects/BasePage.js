@@ -1,60 +1,44 @@
-const { AIWrapper } = require("../utils/AIWrapper");
-
+// page-objects/BasePage.js
+const AIWrapper = require("../utils/AIWrapper");
 class BasePage {
   constructor(page) {
     this.page = page;
     this.ai = new AIWrapper(page);
   }
 
+  getLocator(locatorInfo, elementName = "element") {
+    return this.ai.findWorkingLocator(locatorInfo, elementName);
+  }
+
   async click(locatorInfo, elementName = "element") {
-    await this.ai.smartClick(locatorInfo, elementName);
+    const locator = await this.ai.findWorkingLocator(locatorInfo, elementName);
+    console.log(`Click action performed on "${elementName}"`);
+    await locator.click();
   }
 
   async fill(locatorInfo, value, elementName = "input field") {
-    await this.ai.smartFill(locatorInfo, value, elementName);
+    const locator = await this.ai.findWorkingLocator(locatorInfo, elementName);
+    console.log(`Filled "${elementName}" with "${value}"`);
+    await locator.fill(value);
   }
 
   async getText(locatorInfo, elementName = "element") {
-    return await this.ai.smartTextContent(locatorInfo, elementName);
+    const locator = await this.ai.findWorkingLocator(locatorInfo, elementName);
+    const text = await locator.textContent();
+    console.log(`Got text from "${elementName}": "${text}"`);
+    return text;
   }
 
-  async waitForUrl(regex) {
-    await this.page.waitForURL(regex, { timeout: 10000 });
+  async waitForUrl(urlPattern, timeout = 5000) {
+    await this.page.waitForURL(urlPattern, { timeout });
   }
-
   async navigate(url) {
     await this.page.goto(url);
   }
-
-  async waitForVisible(locatorInfo) {
-    const locator = this.getLocator(locatorInfo);
-    await locator.first().waitFor({ state: "visible" });
-  }
-
-  /**
-   * Centralized locator resolver
-   */
-  getLocator(locatorInfo) {
-    if (locatorInfo.css) return this.page.locator(locatorInfo.css);
-    if (locatorInfo.xpath)
-      return this.page.locator(`xpath=${locatorInfo.xpath}`);
-    if (locatorInfo.placeholder)
-      return this.page.getByPlaceholder(locatorInfo.placeholder);
-    if (locatorInfo.text)
-      return this.page.getByText(locatorInfo.text, { exact: false });
-    if (locatorInfo.role && locatorInfo.text) {
-      return this.page.getByRole(locatorInfo.role, { name: locatorInfo.text });
-    }
-    throw new Error(`Invalid locator: ${JSON.stringify(locatorInfo)}`);
-  }
-
-  async waitForVisible(locatorInfo, timeout = 5000) {
-    const locator = this.getLocator(locatorInfo);
-    await locator.first().waitFor({ state: "visible", timeout });
-  }
-  async waitForInvisible(locatorInfo, timeout = 5000) {
-    const locator = this.getLocator(locatorInfo);
-    await locator.first().waitFor({ state: "hidden", timeout });
+  async waitForVisible(locatorInfo, elementName = "element", timeout = 5000) {
+    const locator = await this.ai.findWorkingLocator(locatorInfo, elementName);
+    await locator.waitFor({ state: "visible", timeout });
+    return locator;
   }
 }
 

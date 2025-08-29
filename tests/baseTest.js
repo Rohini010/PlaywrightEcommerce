@@ -5,5 +5,5 @@ const path = require("path");
 const authFile = path.join(__dirname, "../auth.json");
 
 exports.test = base.extend({
-  storageState: authFile, //  always use saved session
+  storageState: authFile, //save session
 });

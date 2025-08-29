@@ -23,7 +23,6 @@ scenarios.forEach((scenario) => {
       cartPage = new CartPage(page);
       checkoutPage = new CheckoutPage(page);
 
-      // Ensure clean login & cart
       await loginPage.open();
       await loginPage.validLogin();
       await page.goto("https://automationexercise.com/view_cart");
@@ -35,7 +34,6 @@ scenarios.forEach((scenario) => {
     });
 
     test("User can complete order successfully", async () => {
-      // Add products
       await productsPage.openProductsPage();
       await productsPage.addProductsToCart(testData.productNames);
       await productsPage.navigateToCart();
@@ -50,7 +48,6 @@ scenarios.forEach((scenario) => {
         await cartPage.verifyMultipleProducts(expectedProducts);
       }
 
-      // Checkout
       await cartPage.proceedToCheckout();
       await checkoutPage.verifyProductsInCheckout(expectedProducts);
       await checkoutPage.enterOrderMessage("Automating exercise");

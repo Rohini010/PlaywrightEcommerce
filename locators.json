@@ -1,0 +1,56 @@
+{
+  "Products link": {
+    "css": "a[href*='/products']"
+  },
+  "Cart modal message": {
+    "xpath": "//div[@class='modal-body']/p"
+  },
+  "Continue Shopping": {
+    "xpath": "//button[contains(text(),'Continue Shopping')]"
+  },
+  "Email": {
+    "css": ".login-form input[type='email']"
+  },
+  "Password": {
+    "css": ".login-form input[type='password']"
+  },
+  "Login Button": {
+    "css": ".login-form button[type='submit']"
+  },
+  "Logout": {
+    "css": "a[href='/logout']"
+  },
+  "Cart nav link": {
+    "css": ".nav a[href*='/view_cart']"
+  },
+  "Order message": {
+    "css": "#ordermsg textarea"
+  },
+  "Place Order": {
+    "css": "a.check_out"
+  },
+  "element": {
+    "css": "form[action='/login'] p"
+  },
+  "Name on Card": {
+    "css": "input[name='name_on_card']"
+  },
+  "Card Number": {
+    "css": "input[name='card_number']"
+  },
+  "CVC": {
+    "css": "input[name='cvc']"
+  },
+  "Expiry Month": {
+    "css": "input[name='expiry_month']"
+  },
+  "Expiry Year": {
+    "css": "input[name='expiry_year']"
+  },
+  "Confirm Order": {
+    "css": ".col-md-12 button[type='submit']"
+  },
+  "Confirmation message": {
+    "css": ".text-center"
+  }
+}
