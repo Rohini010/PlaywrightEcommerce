@@ -1,6 +1,5 @@
 const { test, expect } = require("@playwright/test");
 const { LoginPage } = require("../page-objects/LoginPage");
-const { email, password } = require("../test-data/userData");
 
 test.describe("Login Tests", () => {
   test("Login to the application", async ({ page }) => {
