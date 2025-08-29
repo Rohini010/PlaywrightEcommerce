@@ -18,7 +18,7 @@ export default defineConfig({
     trace: "on",
   },
 
-  workers: 1,
+  workers: 4,
 
   projects: [
     // {
