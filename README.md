@@ -1,4 +1,3 @@
-<img width="270" height="46" alt="image" src="https://github.com/user-attachments/assets/0ef54985-68f4-4ffc-a961-114e3f431cac" /># PlaywrightEcommerce
 This repository contains an **end-to-end automation testing framework** built using **Playwright** for e-commerce workflows.  
 It supports **cross-browser testing, CI/CD integration with Jenkins, and reporting via Allure & Playwright reports**.
 
