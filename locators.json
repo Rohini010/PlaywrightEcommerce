@@ -3,7 +3,7 @@
     "css": "a[href*='/products']"
   },
   "Cart modal message": {
-    "xpath": "//div[@class='modal-body']/p"
+    "css": ".modal-body p"
   },
   "Continue Shopping": {
     "xpath": "//button[contains(text(),'Continue Shopping')]"
@@ -52,5 +52,8 @@
   },
   "Confirmation message": {
     "css": ".text-center"
+  },
+  "Proceed To Checkout": {
+    "css": ".check_out"
   }
 }

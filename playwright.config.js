@@ -1,4 +1,3 @@
-// @ts-check
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
@@ -11,14 +10,14 @@ export default defineConfig({
   reporter: [["line"], ["html", { open: "never" }], ["allure-playwright"]],
 
   use: {
-    headless: false, // headless for CI/CD
+    headless: true, // headless for CI/CD
     // storageState: "tests/setup/auth.json",
     screenshot: "only-on-failure",
     video: "on",
     trace: "on",
   },
 
-  workers: 4,
+  workers: 1,
 
   projects: [
     // {
