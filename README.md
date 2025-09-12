@@ -13,22 +13,38 @@ Features
 
 ## Setup Instructions
 
-
-1. Install Dependencies
+### 1. Install Dependencies
 
 npm install
 npx playwright install
 
-2. Run Tests
+### 2. Run Tests
 
-Run specific test suites via npm scripts:
-npm run test:all         # Run all test cases
-npm run test:addProduct  # Add product flow
-npm run test:cartVerify  # Cart verification flow
-npm run test:checkout    # Checkout flow
-npm run test:endToEnd    # End-to-end flow
+### Run all test cases
+npm run test:all         
 
-3. Generate Reports
+### Add product flow
+npm run test:addProduct  
 
-npm run allure:generate   # Generate Allure report
-npm run allure:open       # Open Allure report in browser
+### Cart verification flow
+npm run test:cartVerify  
+
+### Checkout flow
+npm run test:checkout    
+
+### End-to-end flow
+npm run test:endToEnd    
+
+
+### 3. Generate Reports
+
+### Generate Allure report
+npm run allure:generate   
+
+### Open Allure report in browser
+npm run allure:open       
+
+### Reports
+
+1. Playwright HTML Report → stored in playwright-report/
+2. Allure Report → generated in allure-results/ and published in Jenkins
