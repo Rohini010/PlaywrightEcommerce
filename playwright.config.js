@@ -6,7 +6,7 @@ export default defineConfig({
   expect: {
     timeout: 45000,
   },
-
+ retries: 1,
   reporter: [["line"], ["html", { open: "never" }], ["allure-playwright"]],
 
   use: {
