@@ -7,7 +7,7 @@ test.describe("Login Tests", () => {
     await loginPage.open();
     await loginPage.validLogin();
     await expect(page).toHaveURL("https://automationexercise.com/");
-    await loginPage.logoutAfterOrder();
+    await loginPage.logout();
   });
 
   test("Invalid Login", async ({ page }) => {

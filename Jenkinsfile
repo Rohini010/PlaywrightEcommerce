@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     tools {
         nodejs "node18"
     }
@@ -7,12 +8,13 @@ pipeline {
     parameters {
         choice(
             name: 'TEST_SUITE',
-            choices: ['all', 'addProduct', 'cartVerify', 'checkout','endToEnd'],
+            choices: ['all', 'addProduct', 'cartVerify', 'checkout', 'endToEnd'],
             description: 'Select which test suite to run'
         )
     }
 
     environment {
+        // Use workspace path for Playwright browsers to avoid repeated downloads
         PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}\\.playwright"
     }
 
@@ -35,12 +37,20 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 bat 'npm install'
-                bat 'npx playwright install'
+
+                script {
+                    if (!fileExists("${env.PLAYWRIGHT_BROWSERS_PATH}/chromium-1400")) {
+                        echo "Playwright browsers not found. Downloading..."
+                        bat 'npx playwright install --force'
+                    } else {
+                        echo "Playwright browsers already downloaded. Skipping download."
+                    }
+                }
             }
         }
 
         stage('Clean Reports') {
-           steps {
+            steps {
                 bat 'npm run clean'
             }
         }
@@ -49,8 +59,7 @@ pipeline {
             steps {
                 bat 'npx allure --version'
             }
-}
-
+        }
 
         stage('Run Tests') {
             steps {
@@ -76,7 +85,6 @@ pipeline {
             }
         }
 
-
         stage('Generate Allure Report') {
             steps {
                 bat 'npm run allure:generate'
@@ -86,8 +94,10 @@ pipeline {
 
     post {
         always {
+            // Archive Playwright HTML report
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
 
+            // Generate Allure report
             allure([
                 reportBuildPolicy: 'ALWAYS',
                 includeProperties: false,

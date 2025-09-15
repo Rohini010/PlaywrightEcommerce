@@ -1,3 +1,4 @@
+// utils/SessionManager.js
 const path = require("path");
 const fs = require("fs");
 const { chromium } = require("@playwright/test");
@@ -11,7 +12,6 @@ async function doLogin() {
 
   await page.goto("https://automationexercise.com/login");
 
-  // Credentials
   await page.fill('input[data-qa="login-email"]', "rohini@example.com");
   await page.fill('input[data-qa="login-password"]', "Rohini@123");
   await page.click('button[data-qa="login-button"]');
@@ -29,7 +29,7 @@ async function ensureAuth() {
     console.log("auth.json missing. Logging in...");
     await doLogin();
   }
-  return authFile; // return path
+  return authFile;
 }
 
 async function clearAuth() {
@@ -39,4 +39,4 @@ async function clearAuth() {
   }
 }
 
-module.exports = { ensureAuth, clearAuth, authFile };
+module.exports = { ensureAuth, clearAuth, authFile, doLogin }; // ✅ export doLogin

@@ -1,93 +1,130 @@
-// utils/AIWrapper.js
-const fs = require("fs");
-const path = require("path");
+const {
+  DEFAULT_TIMEOUT,
+  ENABLE_FUZZY,
+  FUZZY_THRESHOLD,
+} = require("../constants");
 
 class AIWrapper {
   constructor(page) {
     this.page = page;
-    this.locatorsFile = path.join(__dirname, "../locators.json");
-    this.locatorsCache = this.loadLocators();
   }
 
-  loadLocators() {
-    if (fs.existsSync(this.locatorsFile)) {
-      return JSON.parse(fs.readFileSync(this.locatorsFile, "utf-8"));
-    }
-    return {};
-  }
+  async findWorkingLocator(locatorInfo, elementName = "element") {
+    const strategies = ["css", "xpath", "role", "text"];
 
-  saveLocators() {
-    fs.writeFileSync(
-      this.locatorsFile,
-      JSON.stringify(this.locatorsCache, null, 2),
-      "utf-8"
-    );
-  }
+    // Try standard locators first
+    for (const key of strategies) {
+      if (!locatorInfo[key]) continue;
 
-  async findWorkingLocator(locatorInfo, elementName) {
-    const strategies = Object.entries(locatorInfo);
-
-    for (const [type, value] of strategies) {
+      let locator;
       try {
-        let locator;
-        switch (type) {
+        switch (key) {
           case "css":
-            locator = this.page.locator(value);
+            locator = this.page.locator(locatorInfo.css);
             break;
           case "xpath":
-            locator = this.page.locator(`xpath=${value}`);
-            break;
-          case "text":
-            locator = this.page.getByText(value, { exact: true });
+            locator = this.page.locator(locatorInfo.xpath);
             break;
           case "role":
-            locator = this.page.getByRole(value.role, { name: value.name });
+            locator = this.page.getByRole(locatorInfo.role, {
+              name: locatorInfo.text,
+            });
             break;
-          default:
-            continue;
+          case "text":
+            locator = this.page.getByText(locatorInfo.text);
+            break;
         }
 
-        await locator.first().waitFor({ state: "visible", timeout: 2000 });
-        console.log(
-          `[AIWrapper] Using working locator for "${elementName}": ${type} -> ${value}`
-        );
-
-        const cached = this.locatorsCache[elementName]?.[type] === value;
-        console.log(
-          `[AIWrapper] Using ${
-            cached ? "CACHED" : "NEW"
-          } locator for "${elementName}": ${type} -> ${value}`
-        );
-
-        // Update only this locator in cache
-        if (!this.locatorsCache[elementName]) {
-          this.locatorsCache[elementName] = {};
+        if ((await locator.count()) > 0) {
+          const firstLocator = locator.first();
+          firstLocator._usedLocatorType = key;
+          firstLocator._isFuzzy = false;
+          console.log(`[Locator Found] "${elementName}" using ${key} locator`);
+          return firstLocator;
         }
-        this.locatorsCache[elementName] = { [type]: value };
-        this.saveLocators();
-
-        return locator.first();
       } catch (err) {
-        console.log(`[AIWrapper] ${type} failed for "${elementName}"`);
+        // ignore missing locator errors
       }
     }
 
-    throw new Error(`No valid locator found for "${elementName}"`);
+    // Fuzzy search fallback
+    if (!ENABLE_FUZZY || !locatorInfo.text) {
+      throw new Error(`No locator found for "${elementName}"`);
+    }
+
+    const threshold = locatorInfo.fuzzyThreshold || FUZZY_THRESHOLD;
+    const allElements = this.page.locator("a, button, span, div, input, label");
+    const count = await allElements.count();
+    const candidates = [];
+    const seenTexts = new Set();
+
+    for (let i = 0; i < count; i++) {
+      try {
+        const el = allElements.nth(i);
+        if (!(await el.isVisible())) continue;
+
+        const elText = (await el.textContent())?.trim() || "";
+        if (!elText || seenTexts.has(elText)) continue;
+        seenTexts.add(elText);
+
+        // Skip elements too different in length
+        if (Math.abs(elText.length - locatorInfo.text.length) > 15) continue;
+
+        const similarity = this.similarity(elText, locatorInfo.text);
+        candidates.push({ text: elText, similarity, index: i });
+      } catch {
+        // ignore errors
+      }
+    }
+
+    // Pick top candidate if similarity above threshold
+    candidates.sort((a, b) => b.similarity - a.similarity);
+    if (candidates.length > 0 && candidates[0].similarity >= threshold) {
+      const locator = allElements.nth(candidates[0].index);
+      locator._usedLocatorType = "fuzzy-text";
+      locator._isFuzzy = true;
+      console.log(
+        `[Fuzzy Match] "${
+          candidates[0].text
+        }" selected for "${elementName}" | Similarity: ${candidates[0].similarity.toFixed(
+          3
+        )}`
+      );
+      return locator;
+    }
+
+    throw new Error(`No locator found for "${elementName}"`);
   }
 
-  async smartClick(locatorInfo, elementName = "element") {
-    const locator = await this.findWorkingLocator(locatorInfo, elementName);
-    await locator.click();
+  // Similarity calculation (Levenshtein-based)
+  similarity(a, b) {
+    if (!a || !b) return 0;
+    let longer = a.length > b.length ? a : b;
+    let shorter = a.length > b.length ? b : a;
+    const longerLength = longer.length;
+    if (longerLength === 0) return 1.0;
+    const distance = this.levenshtein(longer, shorter);
+    return (longerLength - distance) / longerLength;
   }
 
-  async smartFill(locatorInfo, value, elementName = "input field") {
-    const locator = await this.findWorkingLocator(locatorInfo, elementName);
-    await locator.fill(value);
-  }
+  levenshtein(a, b) {
+    const matrix = Array.from({ length: b.length + 1 }, (_, i) => [i]);
+    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
 
-  async smartGetText(locatorInfo, elementName = "element") {
-    const locator = await this.findWorkingLocator(locatorInfo, elementName);
-    return await locator.textContent();
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        matrix[i][j] =
+          b[i - 1] === a[j - 1]
+            ? matrix[i - 1][j - 1]
+            : Math.min(
+                matrix[i - 1][j - 1] + 1,
+                matrix[i][j - 1] + 1,
+                matrix[i - 1][j] + 1
+              );
+      }
+    }
+
+    return matrix[b.length][a.length];
   }
 }
 

@@ -69,7 +69,7 @@ class LoginPage extends BasePage {
     await this.click(this.locators.submitBtn, "Login Button");
   }
 
-  async logoutAfterOrder() {
+  async logout() {
     await this.click(this.locators.logoutLink, "Logout");
     await this.waitForUrl(/.*login/);
     console.log("Logged out after order");
