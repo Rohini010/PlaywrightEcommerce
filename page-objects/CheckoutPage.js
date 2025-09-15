@@ -7,15 +7,9 @@ class CheckoutPage extends BasePage {
     super(page);
 
     this.locators = {
-      checkoutBtn: {
-        css: "a.check_out",
-        xpath: "//a[contains(text(),'Proceed To Checkout')]",
-        text: "Proceed To Checkout",
-        role: "link",
-      },
       placeOrderBtn: {
         css: "a.check_out",
-        xpath: "//a[contains(text(),'Place Order')]",
+        xpath: "//a[contains(text(),'Placerder')]",
         text: "Place Order",
         role: "link",
       },
@@ -63,9 +57,6 @@ class CheckoutPage extends BasePage {
     };
   }
 
-  /**
-   * Verify product(s) in checkout table
-   */
   async verifyProductsInCheckout(
     expectedProducts = [testData.checkoutProductName]
   ) {
@@ -73,31 +64,33 @@ class CheckoutPage extends BasePage {
       .locator(this.locators.productNames.css)
       .allTextContents();
     const trimmed = productNames.map((n) => n.trim());
-
     for (const product of expectedProducts) {
       expect(trimmed).toContain(product);
       console.log(`Verified product in checkout: ${product}`);
     }
   }
 
-  /**
-   * Enter order message
-   */
   async enterOrderMessage(message = "Automating exercise") {
     await this.fill(this.locators.orderMsg, message, "Order message");
   }
 
-  /**
-   * Click Place Order
-   */
+  // CheckoutPage.js
   async placeOrder() {
-    await this.click(this.locators.placeOrderBtn, "Place Order");
-    await this.waitForVisible(this.locators.nameOnCard); // ensure payment form visible
+    console.log("Clicking Place Order...");
+    const placeOrderLocator = await this.getLocator(
+      this.locators.placeOrderBtn,
+      "Place Order"
+    );
+
+    // Click without waiting for navigation
+    await placeOrderLocator.click();
+    console.log("Place Order clicked. Waiting for payment section...");
+
+    // Wait for Name on Card input to appear
+    await this.waitForVisible(this.locators.nameOnCard, "Name on Card");
+    console.log("Payment section is now visible.");
   }
 
-  /**
-   * Fill Payment Details
-   */
   async fillPaymentDetails(payment = testData.payment) {
     await this.fill(this.locators.nameOnCard, payment.name, "Name on Card");
     await this.fill(this.locators.cardNumber, payment.number, "Card Number");
@@ -107,34 +100,22 @@ class CheckoutPage extends BasePage {
     console.log("Payment details entered successfully");
   }
 
-  /**
-   * Confirm Order
-   */
   async confirmOrder(expectedMessage = testData.messages.orderSuccess) {
     await this.waitForVisible(this.locators.confirmBtn);
+    await this.click(this.locators.confirmBtn, "Confirm Order");
 
-    await Promise.all([
-      this.page.waitForNavigation({ waitUntil: "domcontentloaded" }),
-      this.click(this.locators.confirmBtn, "Confirm Order"),
-    ]);
-
-    await this.waitForUrl(/.*payment_done/);
-
+    // Wait for confirmation message or URL update
+    await this.waitForVisible(
+      this.locators.confirmationMessage,
+      "Confirmation message"
+    );
     const confirmationMessage = await this.getText(
       this.locators.confirmationMessage,
       "Confirmation message"
     );
+
     expect(confirmationMessage).toContain(expectedMessage);
     console.log(`Order confirmed with message: "${expectedMessage}"`);
-  }
-
-  /**
-   * Logout after order
-   */
-  async logoutAfterOrder() {
-    await this.click(this.locators.logoutLink, "Logout");
-    await this.waitForUrl(/.*login/);
-    console.log("Logged out after order");
   }
 }
 

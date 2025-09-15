@@ -30,7 +30,7 @@ scenarios.forEach((scenario) => {
     });
 
     test.afterEach(async () => {
-      await loginPage.logoutAfterOrder();
+      await loginPage.logout();
     });
 
     test("User can complete order successfully", async () => {
@@ -45,7 +45,7 @@ scenarios.forEach((scenario) => {
         expectedProducts = expectedProducts.filter(
           (p) => p !== testData.productToRemove
         );
-        await cartPage.verifyMultipleProducts(expectedProducts);
+        await cartPage.verifyProductInCart(expectedProducts);
       }
 
       await cartPage.proceedToCheckout();

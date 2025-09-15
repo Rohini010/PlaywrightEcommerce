@@ -1,5 +1,5 @@
 {
-  "name": "rohinibitsproject",
+  "name": "playwright_rohini",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -18,14 +18,17 @@
     "allure:open": "allure open allure-report"
   },
   "keywords": [],
-  "author": "Rohini Shilimkar",
+  "author": "",
   "license": "ISC",
-  "description": "Playwright Automation Project with AIWrapper + Allure Reporting",
+  "description": "",
   "devDependencies": {
     "@playwright/test": "^1.54.1",
     "@types/node": "^24.1.0",
     "allure-commandline": "^2.29.0",
     "allure-playwright": "^3.3.2",
     "rimraf": "^5.0.0"
+  },
+  "dependencies": {
+    "levenshtein": "^1.0.5"
   }
 }
