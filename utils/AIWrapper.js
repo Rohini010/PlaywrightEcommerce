@@ -67,17 +67,14 @@ class AIWrapper {
         if (!elText || seenTexts.has(elText)) continue;
         seenTexts.add(elText);
 
-        // Skip elements too different in length
         if (Math.abs(elText.length - locatorInfo.text.length) > 15) continue;
 
         const similarity = this.similarity(elText, locatorInfo.text);
         candidates.push({ text: elText, similarity, index: i });
-      } catch {
-        // ignore errors
-      }
+      } catch {}
     }
 
-    // Pick top candidate if similarity above threshold
+    // Comparing: pick top candidate- similarity above threshold
     candidates.sort((a, b) => b.similarity - a.similarity);
     if (candidates.length > 0 && candidates[0].similarity >= threshold) {
       const locator = allElements.nth(candidates[0].index);
@@ -96,7 +93,7 @@ class AIWrapper {
     throw new Error(`No locator found for "${elementName}"`);
   }
 
-  // Similarity calculation (Levenshtein-based)
+  //Similarity calculation (Levenshtein-based)
   similarity(a, b) {
     if (!a || !b) return 0;
     let longer = a.length > b.length ? a : b;

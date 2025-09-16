@@ -1,4 +1,3 @@
-// fixtures/baseTest.js
 const { test: base } = require("@playwright/test");
 const path = require("path");
 

@@ -5,7 +5,6 @@ async function clearCart(page) {
 
   while ((await removeButtonLocator.count()) > 0) {
     await removeButtonLocator.first().click();
-    // Wait for the button to disappear (DOM update)
     await page.waitForTimeout(500);
   }
 

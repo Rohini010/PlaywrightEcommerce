@@ -2,6 +2,7 @@
 const path = require("path");
 const fs = require("fs");
 const { chromium } = require("@playwright/test");
+const { LoginPage } = require("../page-objects/LoginPage");
 
 const authFile = path.join(__dirname, "../auth.json");
 
@@ -9,11 +10,15 @@ async function doLogin() {
   const browser = await chromium.launch();
   const context = await browser.newContext();
   const page = await context.newPage();
+  const loginPage = new LoginPage(page);
 
-  await page.goto("https://automationexercise.com/login");
+  await loginPage.open();
 
-  await page.fill('input[data-qa="login-email"]', "rohini@example.com");
-  await page.fill('input[data-qa="login-password"]', "Rohini@123");
+  await page.fill('input[data-qa="login-email"]', testData.validuser.email);
+  await page.fill(
+    'input[data-qa="login-password"]',
+    testData.validuser.password
+  );
   await page.click('button[data-qa="login-button"]');
 
   await page.waitForSelector('a[href="/logout"]', { timeout: 10000 });
@@ -39,4 +44,4 @@ async function clearAuth() {
   }
 }
 
-module.exports = { ensureAuth, clearAuth, authFile, doLogin }; // ✅ export doLogin
+module.exports = { ensureAuth, clearAuth, authFile, doLogin };
