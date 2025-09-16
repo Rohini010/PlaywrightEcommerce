@@ -7,7 +7,6 @@ const { CartPage } = require("../page-objects/CartPage");
 const { CheckoutPage } = require("../page-objects/CheckoutPage");
 const testData = require("../test-data/userData");
 
-// test.u
 test.describe("Checkout Flow", () => {
   let loginPage, productsPage, cartPage, checkoutPage;
 

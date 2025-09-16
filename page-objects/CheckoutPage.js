@@ -7,9 +7,15 @@ class CheckoutPage extends BasePage {
     super(page);
 
     this.locators = {
+      checkoutBtn: {
+        css: "a.check_out",
+        xpath: "//a[contains(text(),'Proceed To Checkout')]",
+        text: "Proceed To Checkout",
+        role: "link",
+      },
       placeOrderBtn: {
         css: "a.check_out",
-        xpath: "//a[contains(text(),'Placerder')]",
+        xpath: "//a[contains(text(),'Place Order')]",
         text: "Place Order",
         role: "link",
       },
@@ -64,6 +70,7 @@ class CheckoutPage extends BasePage {
       .locator(this.locators.productNames.css)
       .allTextContents();
     const trimmed = productNames.map((n) => n.trim());
+
     for (const product of expectedProducts) {
       expect(trimmed).toContain(product);
       console.log(`Verified product in checkout: ${product}`);
@@ -74,21 +81,9 @@ class CheckoutPage extends BasePage {
     await this.fill(this.locators.orderMsg, message, "Order message");
   }
 
-  // CheckoutPage.js
   async placeOrder() {
-    console.log("Clicking Place Order...");
-    const placeOrderLocator = await this.getLocator(
-      this.locators.placeOrderBtn,
-      "Place Order"
-    );
-
-    // Click without waiting for navigation
-    await placeOrderLocator.click();
-    console.log("Place Order clicked. Waiting for payment section...");
-
-    // Wait for Name on Card input to appear
-    await this.waitForVisible(this.locators.nameOnCard, "Name on Card");
-    console.log("Payment section is now visible.");
+    await this.click(this.locators.placeOrderBtn, "Place Order");
+    await this.waitForVisible(this.locators.nameOnCard); // ensure payment form visible
   }
 
   async fillPaymentDetails(payment = testData.payment) {
@@ -102,20 +97,26 @@ class CheckoutPage extends BasePage {
 
   async confirmOrder(expectedMessage = testData.messages.orderSuccess) {
     await this.waitForVisible(this.locators.confirmBtn);
-    await this.click(this.locators.confirmBtn, "Confirm Order");
 
-    // Wait for confirmation message or URL update
-    await this.waitForVisible(
-      this.locators.confirmationMessage,
-      "Confirmation message"
-    );
+    await Promise.all([
+      this.page.waitForNavigation({ waitUntil: "domcontentloaded" }),
+      this.click(this.locators.confirmBtn, "Confirm Order"),
+    ]);
+
+    await this.waitForUrl(/.*payment_done/);
+
     const confirmationMessage = await this.getText(
       this.locators.confirmationMessage,
       "Confirmation message"
     );
-
     expect(confirmationMessage).toContain(expectedMessage);
     console.log(`Order confirmed with message: "${expectedMessage}"`);
+  }
+
+  async logoutAfterOrder() {
+    await this.click(this.locators.logoutLink, "Logout");
+    await this.waitForUrl(/.*login/);
+    console.log("Logged out after order");
   }
 }
 

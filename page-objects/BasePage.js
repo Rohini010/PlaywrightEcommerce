@@ -25,15 +25,10 @@ class BasePage {
     );
   }
 
-  /**
-   * Get a working locator with cache + retry fallback
-   * @param {Object} locatorInfo
-   * @param {string} elementName
-   */
   async getLocator(locatorInfo, elementName = "element") {
     let locator;
 
-    // 1. Try cached locator first
+    // Try cached locator first
     if (this._locatorCache[elementName]) {
       locator = this.page.locator(this._locatorCache[elementName]);
       if ((await locator.count()) > 0) {
@@ -46,14 +41,14 @@ class BasePage {
       }
     }
 
-    // 2. Fallback → AIWrapper decides best selector (css, xpath, text, role)
+    // Fallback → AIWrapper decides best selector (css, xpath, text, role)
     locator = await this.ai.findWorkingLocator(locatorInfo, elementName, true);
 
     if (!locator) {
       throw new Error(`No locator found for "${elementName}" after retry`);
     }
 
-    // 3. Extract Playwright selector string safely
+    // Extract Playwright selector string safely
     const selectorString =
       locatorInfo.css ||
       locatorInfo.xpath ||

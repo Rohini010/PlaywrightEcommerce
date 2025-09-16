@@ -1,4 +1,3 @@
-// page-objects/ProductsPage.js
 const { BasePage } = require("./BasePage");
 const testData = require("../test-data/userData");
 
@@ -9,24 +8,20 @@ class ProductsPage extends BasePage {
     this.locators = {
       productsLink: {
         css: "a[href*='/products']",
-        xpath: "//a[contains(@href, '/products)]",
+        xpath: "//a[contains(@href, '/products')]",
         text: "Products",
         role: "link",
       },
       productWrapperCss: ".product-image-wrapper .single-products",
-
       cartModalMessage: {
         css: ".modal-body p",
-
         xpath: "//div[@class='modal-body']/p",
       },
-
       continueShoppingBtn: {
         xpath: "//button[contains(text(),'Continue Shopping')]",
         text: "Continue Shopping",
         role: "button",
       },
-
       cartNavLink: {
         css: ".nav a[href*='/view_cart']",
         xpath: "//a[contains(@href, '/view_cart')]",
@@ -37,8 +32,7 @@ class ProductsPage extends BasePage {
   }
 
   async openProductsPage() {
-    await this.navigate("https://automationexercise.com/");
-    // should log [Fuzzy Locator] and still click
+    await this.page.goto("https://automationexercise.com/");
     await this.click(this.locators.productsLink, "Products link");
   }
 
@@ -51,10 +45,12 @@ class ProductsPage extends BasePage {
   async addProductToCart(productName = testData.productName) {
     const product = this.productLocator(productName);
     console.log(`Adding product to cart: ${productName}`);
-
     const count = await product.count();
-    if (count !== 1)
+    console.log(`Found ${count} instances of ${productName}`);
+
+    if (count !== 1) {
       throw new Error(`Product "${productName}" not found or duplicated.`);
+    }
 
     await product.hover();
     const addToCartBtn = product.locator(
