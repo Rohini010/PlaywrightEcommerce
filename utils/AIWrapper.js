@@ -53,7 +53,7 @@ class AIWrapper {
     }
 
     const threshold = locatorInfo.fuzzyThreshold || FUZZY_THRESHOLD;
-    const allElements = this.page.locator("a, button, span, div, input, label");
+    const allElements = this.page.locator("a, button, input, label"); //limiting search due to performance issues
     const count = await allElements.count();
     const candidates = [];
     const seenTexts = new Set();
