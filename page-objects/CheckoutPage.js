@@ -11,17 +11,18 @@ class CheckoutPage extends BasePage {
         css: "a.check_out",
         xpath: "//a[contains(text(),'Proceed To Checkout')]",
         text: "Proceed To Checkout",
-        role: "link",
+        role: { type: "link", name: "Proceed To Checkout" },
       },
       placeOrderBtn: {
         css: "a.check_out",
         xpath: "//a[contains(text(),'Place Order')]",
         text: "Place Order",
-        role: "link",
+        role: { type: "link", name: "Place Order" },
       },
       orderMsg: {
         css: "#ordermsg textarea",
         xpath: "//textarea[@id='ordermsg']",
+        role: { type: "textbox", name: "Order message" },
       },
       productNames: {
         css: ".table-condensed tbody tr td h4 a",
@@ -30,10 +31,12 @@ class CheckoutPage extends BasePage {
       nameOnCard: {
         css: "input[name='name_on_card']",
         xpath: "//input[@name='name_on_card']",
+        role: { type: "textbox", name: "Name on card" },
       },
       cardNumber: {
         css: "input[name='card_number']",
         xpath: "//input[@name='card_number']",
+        role: { type: "textbox", name: "Card Number" },
       },
       cvc: { css: "input[name='cvc']", xpath: "//input[@name='cvc']" },
       expiryMonth: {
@@ -48,13 +51,13 @@ class CheckoutPage extends BasePage {
         css: ".col-md-12 button[type='submit']",
         xpath: "//button[contains(text(),'Confirm')]",
         text: "Confirm",
-        role: "button",
+        role: { type: "button", name: "Confirm" },
       },
       logoutLink: {
         css: "a[href*='logout']",
         xpath: "//a[contains(@href,'logout')]",
         text: "Logout",
-        role: "link",
+        role: { type: "link", name: "Logout" },
       },
       confirmationMessage: {
         css: ".text-center",

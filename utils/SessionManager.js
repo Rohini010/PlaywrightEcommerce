@@ -2,6 +2,7 @@
 const path = require("path");
 const fs = require("fs");
 const { chromium } = require("@playwright/test");
+const testData = require("../test-data/userData");
 const { LoginPage } = require("../page-objects/LoginPage");
 
 const authFile = path.join(__dirname, "../auth.json");

@@ -9,21 +9,26 @@ class LoginPage extends BasePage {
       emailInput: {
         css: ".login-form input[type='email']",
         xpath: "//input[@placeholder='Email Address']",
+        text: "Email Address",
+        role: { type: "textbox", name: "Email Address" },
       },
       passwordInput: {
         css: ".login-form input[type='password']",
         xpath: "//input[@placeholder='Password']",
+        text: "Password",
+        role: { type: "textbox", name: "Password" },
       },
       submitBtn: {
         css: ".login-form button[type='submit']",
         xpath: "//button[contains(text(),'Login')]",
         text: "Login",
-        role: "button",
+        role: { type: "button", name: "Login" },
       },
       logoutLink: {
         css: "a[href='/logout']",
         xpath: "//a[@href='/logout']",
         text: "Logout",
+        role: { type: "link", name: "Logout" },
       },
       errorMessage: {
         css: "form[action='/login'] p",

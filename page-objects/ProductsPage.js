@@ -10,7 +10,7 @@ class ProductsPage extends BasePage {
         css: "a[href*='/products']",
         xpath: "//a[contains(@href, '/products')]",
         text: "Products",
-        role: "link",
+        role: { name: "Products", type: "link" },
       },
       productWrapperCss: ".product-image-wrapper .single-products",
       cartModalMessage: {
@@ -20,13 +20,13 @@ class ProductsPage extends BasePage {
       continueShoppingBtn: {
         xpath: "//button[contains(text(),'Continue Shopping')]",
         text: "Continue Shopping",
-        role: "button",
+        role: { name: "Continue Shopping", type: "button" },
       },
       cartNavLink: {
         css: ".nav a[href*='/view_cart']",
         xpath: "//a[contains(@href, '/view_cart')]",
         text: "Cart",
-        role: "link",
+        role: { type: "link", name: "Cart" },
       },
     };
   }

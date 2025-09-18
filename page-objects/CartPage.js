@@ -14,12 +14,12 @@ class CartPage extends BasePage {
         css: ".check_out",
         xpath: "//a[contains(@class,'check_out')]",
         text: "Proceed To Checkout",
-        role: "link",
+        role: { type: "link", name: "Proceed To Checkout" },
       },
       removeItemBtn: (productName) => ({
         xpath: `//tr[contains(., "${productName}")]//a[contains(@class,"cart_quantity_delete")]`,
         css: `tr:has-text("${productName}") a.cart_quantity_delete`,
-        role: "link",
+        role: { type: "link", name: "Delete" },
         text: "Delete",
       }),
     };
